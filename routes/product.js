@@ -29,7 +29,7 @@ router.put("/:id", verifyTokenAndAdmin, async (req,res)=>{
     },
     {new:true}
     );
-    res.status(200).json(updatedProduct)
+    res.status(200).json(updatedProduct)    
    } catch(err){
     res.status(500).json(err);
    }
@@ -51,10 +51,10 @@ router.delete("/:id", verifyTokenAndAdmin, async (req,res)=>{
 
 router.get("/find/:id", async (req,res)=>{
     try{
-        const product = await Product.findById(req.params.id)
-        const { password, ...others } = user._doc;
+        const product = await Product.findById(req.params.id);
         res.status(200).json(product);
     } catch(err){
+        console.log(err);
         res.status(500).json(err)
     }
 });

@@ -8,11 +8,31 @@ const verifyToken = (req,res,next)=>{
         jwt.verify(token, process.env.jWT_SEC, (err,user)=>{
             if(err) res.status(403).json("Token is not valid!");
             req.user = user;
-            next()
+            next();
         })
      } else {
         return res.status(401).json("You are not authenticated!");
      }
+}
+
+const verifyTokenFromReact = (req,res,next)=>{
+    console.log(req.body);
+    console.log("hii");
+    console.log(next);
+    const accessToken = req.body.accessToken;
+    if(accessToken){
+        jwt.verify(accessToken,process.env.JWT_SEC,(err,user)=>{
+            if(!err) {
+                res.status(403).json("Token is not valid");
+                res.user = user;
+                next();
+            }else{
+                res.status(401).json("You are not authenticated!");
+            }
+        })
+    }else{
+        res.status(401).json("You are not authenticated!");
+    }
 }
 
 const verifyTokenAndAuthorization = (req,res,next)=>{
@@ -35,4 +55,4 @@ const verifyTokenAndAdmin = (req,res,next)=>{
     });
 }
 
-module.exports = {verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin};
+module.exports = {verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin,verifyTokenFromReact};

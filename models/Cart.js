@@ -6,7 +6,8 @@ const cartSchema = new mongoose.Schema(
         products: [
             {
                 productId:{
-                    type:String
+                    type:mongoose.SchemaTypes.ObjectId,
+                    ref: 'Product',
                 },
                 quantity:{
                     type:Number,
@@ -14,6 +15,7 @@ const cartSchema = new mongoose.Schema(
                 },
             },
         ],
+        total:{type:Number},
     },
     { timestamps: true }
 );

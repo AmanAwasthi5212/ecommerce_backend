@@ -1,11 +1,34 @@
 const Order = require("../models/Order");
+const Cart = require("../models/Cart");
 const {verifyToken, 
     verifyTokenAndAuthorization, 
-    verifyTokenAndAdmin,
+    verifyTokenAndAdmin,verifyTokenFromReact
     } = require("./VerifyToken");
 
 const router = require("express").Router();
- 
+
+//create order from cart
+
+router.post("/fromCart",verifyTokenFromReact,async (req,res)=>{
+
+    const cart = await Cart.findOne({userId:res.user.id});
+    console.log(cart);
+
+    const orderData = {
+        "userId": cart.userId,
+        "products": cart.products,
+        "amount":req.body.amount,
+        "address":"USA",
+        stripeID:req.body.stripeID,
+    }
+    const newOrder = new Order(orderData);
+    await newOrder.save();
+
+    await cart.remove();
+
+    res.send({message:"Order placed!"});
+})
+
 //CREATE
 
 router.post("/", verifyToken, async (req, res) => {
@@ -72,13 +95,18 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
 //GET MONTHLY INCOME
 
 router.get("/income", verifyTokenAndAdmin, async (req,res)=>{
+    const productId = req.pid;
     const date = new Date();
     const lastMonth = new Date(date.setMonth(date.getMonth() -1));
     const previosMonth = new Date(new Date().setMonth(lastMonth.getMonth() -1));
 
     try{
         const income = await Order.aggregate([
-            { $match: { createdAt: { $gte: previosMonth } } },
+            { $match: { createdAt: { $gte: previosMonth }, ...(productId && {
+                products:{ $elemMatch: {productId}},
+            }),
+         },
+        },
             {
                 $project: {
                     month: { $month: "$createdAt" },
