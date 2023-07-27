@@ -16,14 +16,10 @@ const verifyToken = (req,res,next)=>{
 }
 
 const verifyTokenFromReact = (req,res,next)=>{
-    console.log(req.body);
-    console.log("hii");
-    console.log(next);
     const accessToken = req.body.accessToken;
     if(accessToken){
         jwt.verify(accessToken,process.env.JWT_SEC,(err,user)=>{
             if(!err) {
-                res.status(403).json("Token is not valid");
                 res.user = user;
                 next();
             }else{
