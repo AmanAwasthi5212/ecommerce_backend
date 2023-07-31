@@ -8,7 +8,6 @@ const {
 
 const cartController = require("../controller/cart");
 
-const {verifyToken} = require("../authMiddleware");
 
 const router = require("express").Router();
  
@@ -143,7 +142,24 @@ router.delete("/:id", verifyTokenAndAuthorization, async (req,res)=>{
 
 //GET USER CART
 
-router.post("/find",cartController.findCart);
+router.post("/find",verifyTokenFromReact,async(req,res)=>{
+    try{
+        console.log(req.body);
+       
+        const cart = await Cart.findOne({userId: res.user.id});
+
+        for(let i=0;i<cart.products.length;i++){
+            const id = cart.products[i].productId;
+            const product = await Product.findById(id);
+            cart.products[i].productId = product;
+        }
+
+        console.log(cart);
+        res.status(200).json(cart);        
+    } catch(err){
+        res.status(500).json(err)
+    }
+});
 
 //GET ALL
 

@@ -23,8 +23,9 @@ router.post("/fromCart",verifyTokenFromReact,async (req,res)=>{
     }
     const newOrder = new Order(orderData);
     await newOrder.save();
-
-    await cart.remove();
+    cart.products=[];
+    cart.total=0;
+    await cart.save();
 
     res.send({message:"Order placed!"});
 })
