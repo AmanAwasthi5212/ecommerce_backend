@@ -147,6 +147,7 @@ router.post("/find",verifyTokenFromReact,async(req,res)=>{
         console.log(req.body);
        
         const cart = await Cart.findOne({userId: res.user.id});
+        console.log(cart);
 
         for(let i=0;i<cart.products.length;i++){
             const id = cart.products[i].productId;

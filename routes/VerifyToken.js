@@ -17,6 +17,7 @@ const verifyToken = (req,res,next)=>{
 
 const verifyTokenFromReact = (req,res,next)=>{
     const accessToken = req.body.accessToken;
+    console.log(req.body);
     if(accessToken){
         jwt.verify(accessToken,process.env.JWT_SEC,(err,user)=>{
             if(!err) {
